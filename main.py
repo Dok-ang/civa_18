@@ -93,11 +93,13 @@ class City(Screen):
     def __init__(self, **kw):
         super().__init__(**kw)
         self.add_widget(Button(text="Місто"))
+
 class Infrastructure(Screen):
     name="infrastructure"
     def __init__(self, **kw):
         super().__init__(**kw)
         self.add_widget(Button(text="Інфраструктура"))
+        
 class Army(Screen):
     name="army"
     def __init__(self, **kw):
