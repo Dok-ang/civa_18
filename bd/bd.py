@@ -9,7 +9,7 @@ connection = mysql.connector.connect(
 # Створення об'єкта курсора
 cursor = connection.cursor()
 
-name_base="civilization3"
+name_base="civilization18"
 cursor.execute("DROP DATABASE IF EXISTS {0}".format(name_base))
 connection.commit()
 
@@ -297,8 +297,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
 # capacity - місткість
 # coefficient 0.5 - +50% до захисту та -50% до атаки, 1.5 - -50% до захисту та +50% до атаки
 # Вставка даних в таблицю
-command = "INSERT INTO {0} (name, mining_time, hp, armor, power, capacity, coefficient, people, tree, stone, food, iron, gold, oil) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(army)
-
+# maintenance обслуговування
+command = "INSERT INTO {0} (name, mining_time, hp, armor, power, capacity, coefficient, maintenance, people, tree, stone, food, iron, gold, oil) VALUES (%s, %s %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(army)
 data = ("knight", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
 data = ("assault_infantry", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
