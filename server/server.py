@@ -8,8 +8,13 @@ connection = mysql.connector.connect(
     database="civilization3"
 )
 all_resource=["people","tree","stone","food","iron","gold","oil"]
+<<<<<<< HEAD
 all_buildings=["sawmill","mine","farm","smithy","bank","oil_rig","barrack","post_office","polygon","shooting_gallery","tank_factory","airfield"]
 all_army=["knight","shooter","postman","assault_infantry","plane","tank"]
+=======
+all_buildings=["sawmill","mine","farm","smithy","bank","oil_rig","barrack","shooting_gallery","polygon","post_office","tank_factory","airfield"]
+all_army=["knight","assault_infantry","shooter","postman","tank","plane"]
+>>>>>>> 482adcd0f63812f5028ee6b495ac0d5ff436b4e1
 # Створення об'єкта курсора
 cursor = connection.cursor()
 import socket
