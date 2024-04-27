@@ -144,8 +144,6 @@ cursor.execute(command, data)
 data = ("barrack", 1000, 2, 4, 20, 2, 0, 2, 50, 0)
 cursor.execute(command, data)
 
-data = ("assult_infantry", 1000, 2, 4, 20, 2, 0, 2, 50, 0)
-cursor.execute(command, data)
 data = ("post_office", 1000, 2, 4, 20, 2, 0, 2, 50, 0)
 cursor.execute(command, data)
 data = ("polygon", 1000, 2, 4, 20, 2, 0, 2, 50, 0)
@@ -276,6 +274,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     power INT NOT NULL,
     capacity INT NOT NULL,
     coefficient FLOAT NOT NULL,
+    maintenance INT NOT NULL,
     people INT NOT NULL,
     tree INT NOT NULL,
     stone INT NOT NULL,
@@ -287,20 +286,19 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
 #capacity - місткість
 #coefficient - оборона, захист
 
-
 # Вставка даних в таблицю
-command = "INSERT INTO {0} (name, mining_time, hp, armor, power, capacity, coefficient, people, tree, stone, food, iron, gold, oil) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(army)
-data = ("knight", 1000, 200, 20, 90)
+command = "INSERT INTO {0} (name, mining_time, hp, armor, power, capacity, coefficient, maintenance, people, tree, stone, food, iron, gold, oil) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(army)
+data = ("knight", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
-data = ("shooter", 1500, 50, 10, 45)
+data = ("shooter", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
-data = ("postman", 1500, 50, 10, 45)
+data = ("postman", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
-data = ("assault_infantry", 3000, 200, 20, 90)
+data = ("assault_infantry", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
-data = ("plane", 1500, 50, 10, 45)
+data = ("plane", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
-data = ("tank", 1500, 50, 10, 45)
+data = ("tank", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
