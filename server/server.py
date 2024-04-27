@@ -81,6 +81,10 @@ async def new_connect(input_message,output_message):
             cursor.execute("INSERT INTO iron (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["iron"],time_now))
             cursor.execute("INSERT INTO gold (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["gold"],time_now))
             cursor.execute("INSERT INTO oil (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["oil"],time_now))
+            for build in all_buildings:
+                cursor.execute(f"INSERT INTO {build} (id_user, count, building_start_time, new_buildings_count) VALUES (%s, %s, %s, %s)", (user_id, 0, time_now, 0))
+            for army in all_army:
+                cursor.execute(f"INSERT INTO {army} (id_user, count, army_start_time, new_army_count) VALUES (%s, %s, %s, %s)", (user_id, 0, time_now, 0))
             connection.commit()
             with open("file/user_number.txt","w") as f:
                 f.write(str(int(user_number)+1))
