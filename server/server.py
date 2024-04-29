@@ -2,9 +2,9 @@ import mysql.connector
 # З'єднання з базою даних
 connection = mysql.connector.connect(
     host='localhost',  # або 'ip' для локального сервера
-    user='root',
-    password='root',
-    port=2023,  # порт, на якому працює MySQL
+    user='admin',
+    password='admin',
+    port=4539,  # порт, на якому працює MySQL
     database="civilization3"
 )
 all_resource=["people","tree","stone","food","iron","gold","oil"]
@@ -99,7 +99,7 @@ async def new_connect(input_message,output_message):
     output_message.close()
     #connect.sendall(date)
 async def main():
-    server = await asyncio.start_server(new_connect,"192.168.50.111",2024)
+    server = await asyncio.start_server(new_connect,"192.168.56.1",3945)
     async with server:
         await server.serve_forever()
 if __name__=="__main__":

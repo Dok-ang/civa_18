@@ -2,9 +2,9 @@ import mysql.connector
 # З'єднання з базою даних
 connection = mysql.connector.connect(
     host='localhost',  # або 'ip' для локального сервера
-    user='root',
-    password='root',
-    port=2023  # порт, на якому працює MySQL
+    user='admin',
+    password='admin',
+    port=4539  # порт, на якому працює MySQL
 )
 # Створення об'єкта курсора
 cursor = connection.cursor()
@@ -340,7 +340,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
 # capacity - місткість
 # coefficient 0.5 - +50% до захисту та -50% до атаки, 1.5 - -50% до захисту та +50% до атаки
 # Вставка даних в таблицю
-command = "INSERT INTO {0} (name, mining_time, hp, armor, power, capacity, coefficient, people, tree, stone, food, iron, gold, oil) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(army)
+command = "INSERT INTO {0} (name, mining_time, hp, armor, power, capacity, coefficient, maintenance, people, tree, stone, food, iron, gold, oil) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)".format(army)
 data = ("knight", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
 cursor.execute(command, data)
 data = ("assault_infantry", 1000, 100, 20, 60, 2, 1, 1, 1, 1, 1, 2, 0, 50, 0)
