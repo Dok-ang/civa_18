@@ -6,6 +6,7 @@ from kivy import platform
 from kivy.uix.slider import Slider
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.image import Image
 from kivy.clock import Clock
 import pygame
 import json
@@ -13,7 +14,12 @@ pygame.init()
 import socket
 import threading
 import os
+import urllib3
+import math
 
+population=0
+budget=0
+username='user'
 priority={"init":5,
           "donate":0,
           "update_resource":8}
@@ -34,7 +40,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("80.77.36.110",2023))
+            obj.connect(("134.249.176.116",8080))
             break
         except:
             pass
@@ -61,7 +67,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("80.77.36.110",2023))
+            obj.connect(("134.249.176.116",8080))
             break
         except:
             pass
@@ -92,7 +98,32 @@ class City(Screen):
     name="city"
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.add_widget(Button(text="Місто"))
+        self.bg=Image(source='sprites/city_bg.png', fit_mode='fill')
+        self.add_widget(self.bg)
+        self.main_title=Button(text='Інфа', pos_hint={'right':0.4,'top':0.725}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'], background_color=[0,0,0,0])
+        self.add_widget(self.main_title)
+        self.left_page_content=Button(pos_hint={'right':0.4,'top':0.635}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/2.5, background_color=[0,0,0,0], markup=True,
+                                      text=f'''Глава: {username}
+Популяція: {population}
+Бюджет: {budget}$
+
+
+
+
+
+
+
+
+''')
+        self.add_widget(self.left_page_content)
+        ip=urllib3.request('GET', 'api.ipify.org').data.decode()
+        info=urllib3.request('GET', f'https://ipapi.co/{ip}/json/').json()
+        self.right_page_content=Button(pos_hint={'x':0.5,'top':0.67}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/4.9, background_color=[0,0,0,0], markup=True)
+        for i in info:
+            self.right_page_content.text+=f'{i}: {info[i]}\n'
+        self.add_widget(self.right_page_content)
+    def on_pre_enter(self, *args):
+        return super().on_pre_enter(*args)
 
 class Infrastructure(Screen):
     name="infrastructure"
@@ -274,6 +305,7 @@ class Game(Screen):
     def go_menu(self,button):
         self.manager.current="menu"
     def update(self,clock):
+        global population, budget
         if all_commands:
             _,_,command=heapq.heappop(all_commands)
             if command["action"]=="init" or command["action"]=="update_resource":
@@ -286,12 +318,14 @@ class Game(Screen):
                     self.all_resource[res]+=1
                     resource_mining_time_control[res]=time_now+(time_now-resource_mining_time_control[res]-resource_mining_time[res])
             self.people_text.text=str(self.all_resource["people"])
+            population=int(self.people_text.text)
             self.food_text.text=str(self.all_resource["food"])
             self.tree_text.text=str(self.all_resource["tree"])
             self.iron_text.text=str(self.all_resource["iron"])
             self.gold_text.text=str(self.all_resource["gold"])
             self.stone_text.text=str(self.all_resource["stone"])
             self.oil_text.text=str(self.all_resource["oil"])
+            budget=self.all_resource["gold"]+self.all_resource["oil"]*10
             
 
         

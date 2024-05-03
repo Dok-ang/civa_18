@@ -3,18 +3,13 @@ import mysql.connector
 connection = mysql.connector.connect(
     host='localhost',  # або 'ip' для локального сервера
     user='root',
-    password='root',
-    port=2023,  # порт, на якому працює MySQL
+    password='admin',
+    port=9090,  # порт, на якому працює MySQL
     database="civilization3"
 )
 all_resource=["people","tree","stone","food","iron","gold","oil"]
-<<<<<<< HEAD
-all_buildings=["sawmill","mine","farm","smithy","bank","oil_rig","barrack","post_office","polygon","shooting_gallery","tank_factory","airfield"]
-all_army=["knight","shooter","postman","assault_infantry","plane","tank"]
-=======
 all_buildings=["sawmill","mine","farm","smithy","bank","oil_rig","barrack","shooting_gallery","polygon","post_office","tank_factory","airfield"]
 all_army=["knight","assault_infantry","shooter","postman","tank","plane"]
->>>>>>> 482adcd0f63812f5028ee6b495ac0d5ff436b4e1
 # Створення об'єкта курсора
 cursor = connection.cursor()
 import socket
@@ -104,8 +99,9 @@ async def new_connect(input_message,output_message):
     output_message.close()
     #connect.sendall(date)
 async def main():
-    server = await asyncio.start_server(new_connect,"192.168.50.111",2024)
+    server = await asyncio.start_server(new_connect,"192.168.0.120",8080)
     async with server:
+        print('Started')
         await server.serve_forever()
 if __name__=="__main__":
     asyncio.run(main())
