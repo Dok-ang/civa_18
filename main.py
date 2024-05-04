@@ -34,7 +34,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("192.168.56.1",3945))
+            obj.connect(("80.77.36.110",2023))
             break
         except:
             pass
@@ -61,7 +61,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("192.168.56.1",3945))
+            obj.connect(("80.77.36.110",2023))
             break
         except:
             pass

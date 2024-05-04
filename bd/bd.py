@@ -2,9 +2,9 @@ import mysql.connector
 # З'єднання з базою даних
 connection = mysql.connector.connect(
     host='localhost',  # або 'ip' для локального сервера
-    user='admin',
-    password='admin',
-    port=4539  # порт, на якому працює MySQL
+    user='root',
+    password='root',
+    port=2023  # порт, на якому працює MySQL
 )
 # Створення об'єкта курсора
 cursor = connection.cursor()
@@ -246,14 +246,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
 )""".format("tank_factory"))
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_shooting_galarie INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    buildings_start_time FLOAT,
-    new_buildings_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("shooting_galarie"))
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     id_poligon INT PRIMARY KEY AUTO_INCREMENT,
