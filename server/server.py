@@ -123,7 +123,7 @@ async def new_connect(input_message,output_message):
     output_message.close()
     #connect.sendall(date)
 async def main():
-    server = await asyncio.start_server(new_connect,"192.168.50.82",4538)
+    server = await asyncio.start_server(new_connect,"192.168.56.1",3945)
     async with server:
         print('Started')
         await server.serve_forever()
