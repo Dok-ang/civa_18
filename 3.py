@@ -3,10 +3,10 @@ import mysql.connector
 # З'єднання з базою даних
 connection = mysql.connector.connect(
     host='localhost',  # або 'localhost' для локального сервера 134.249.176.108
-    user='root',
-    password='root',
+    user='admin',
+    password='admin',
     database='civilization3', # Sakila server_database
-    port=2023  # порт, на якому працює MySQL
+    port=4539  # порт, на якому працює MySQL
 )
 
 # Створення курсора для виконання SQL-запитів
