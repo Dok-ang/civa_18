@@ -1,5 +1,6 @@
 from kivy.app import App
 from kivy.uix.screenmanager import Screen, ScreenManager, WipeTransition, SlideTransition, SwapTransition
+from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy import platform
@@ -7,6 +8,7 @@ from kivy.uix.slider import Slider
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label as KivyLabel
+from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.clock import Clock
 import pygame
@@ -103,6 +105,12 @@ class Label(KivyLabel):
     def update(self, dt):
         if self.auto_text_size_enabled:
             self.text_size = [Window.size[0]*self.size_hint_x, Window.size[1]*self.size_hint_y]
+
+class ResourceIcon(Widget):
+    img=StringProperty('')
+    def __init__(self, source='', **kwargs):
+        super().__init__(**kwargs)
+        self.img=source
 
 class City(Screen):
     name="city"
@@ -232,51 +240,51 @@ class Game(Screen):
         ###### ресурси додатково..
 
         people_box=BoxLayout(orientation="vertical")
-        people_image=Button(background_normal=path+"sprites/people.png",background_down=path+"sprites/people.png")
-        self.people_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        people_image=ResourceIcon(source=path+"sprites/people.png")
+        self.people_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         people_box.add_widget(people_image)
         people_box.add_widget(self.people_text)
         resource.add_widget(people_box)
 
         food_box=BoxLayout(orientation="vertical")
-        food_image=Button(background_normal=path+"sprites/food.png",background_down=path+"sprites/food.png")
-        self.food_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        food_image=ResourceIcon(source=path+"sprites/food.png")
+        self.food_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         food_box.add_widget(food_image)
         food_box.add_widget(self.food_text)
         resource.add_widget(food_box)
 
         tree_box=BoxLayout(orientation="vertical")
-        tree_image=Button(background_normal=path+"sprites/tree.png",background_down=path+"sprites/tree.png")
-        self.tree_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        tree_image=ResourceIcon(source=path+"sprites/tree.png")
+        self.tree_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         tree_box.add_widget(tree_image)
         tree_box.add_widget(self.tree_text)
         resource.add_widget(tree_box)
 
         stone_box=BoxLayout(orientation="vertical")
-        stone_image=Button(background_normal=path+"sprites/stone.png",background_down=path+"sprites/stone.png")
-        self.stone_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        stone_image=ResourceIcon(source=path+"sprites/stone.png")
+        self.stone_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         stone_box.add_widget(stone_image)
         stone_box.add_widget(self.stone_text)
         resource.add_widget(stone_box)
 
         iron_box=BoxLayout(orientation="vertical")
-        iron_image=Button(background_normal=path+"sprites/iron.png",background_down=path+"sprites/iron.png")
-        self.iron_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        iron_image=ResourceIcon(source=path+"sprites/iron.png")
+        self.iron_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         iron_box.add_widget(iron_image)
         iron_box.add_widget(self.iron_text)
         resource.add_widget(iron_box)
 
 
         gold_box=BoxLayout(orientation="vertical")
-        gold_image=Button(background_normal=path+"sprites/gold.png",background_down=path+"sprites/gold.png")
-        self.gold_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        gold_image=ResourceIcon(source=path+"sprites/gold.png")
+        self.gold_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         gold_box.add_widget(gold_image)
         gold_box.add_widget(self.gold_text)
         resource.add_widget(gold_box)
 
         oil_box=BoxLayout(orientation="vertical")
-        oil_image=Button(background_normal=path+"sprites/oil.png",background_down=path+"sprites/oil.png")
-        self.oil_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        oil_image=ResourceIcon(source=path+"sprites/oil.png")
+        self.oil_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         oil_box.add_widget(oil_image)
         oil_box.add_widget(self.oil_text)
         resource.add_widget(oil_box)
@@ -335,6 +343,13 @@ class Game(Screen):
         self.manager.current="menu"
     def update(self,clock):
         options["text_size"]=Window.size[0]/13
+        self.people_text.font_size=options["text_size"]*0.3
+        self.food_text.font_size=options["text_size"]*0.3
+        self.tree_text.font_size=options["text_size"]*0.3
+        self.stone_text.font_size=options["text_size"]*0.3
+        self.iron_text.font_size=options["text_size"]*0.3
+        self.gold_text.font_size=options["text_size"]*0.3
+        self.oil_text.font_size=options["text_size"]*0.3
 
         global population, budget
         if all_commands:
