@@ -6,6 +6,7 @@ from kivy import platform
 from kivy.uix.slider import Slider
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label as KivyLabel
 from kivy.uix.image import Image
 from kivy.clock import Clock
 import pygame
@@ -37,10 +38,11 @@ all_commands=[]
 resource_mining_time={} # час добування конкретного ресурсу
 resource_mining_time_control={} # час останнього збільшення
 def start_game():
+    global username
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("192.168.56.1",3945))
+            obj.connect(("192.168.0.120",8080))
             break
         except:
             pass
@@ -67,7 +69,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("192.168.56.1",3945))
+            obj.connect(("192.168.0.120",8080))
             break
         except:
             pass
@@ -94,15 +96,23 @@ options["server_run"]=False
 fon_music.play(-1)
 fon_music.set_volume(options["volume"])
 
+class Label(KivyLabel):
+    def __init__(self, auto_text_size_enabled=True, **kwargs):
+        super().__init__(**kwargs)
+        self.auto_text_size_enabled=auto_text_size_enabled
+    def update(self, dt):
+        if self.auto_text_size_enabled:
+            self.text_size = [Window.size[0]*self.size_hint_x, Window.size[1]*self.size_hint_y]
+
 class City(Screen):
     name="city"
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.bg=Image(source='sprites/city_bg.png', fit_mode='fill')
+        self.bg=Image(source='sprites/city_bg.png', fit_mode='cover')
         self.add_widget(self.bg)
-        self.main_title=Button(text='Інфа', pos_hint={'right':0.4,'top':0.725}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'], background_color=[0,0,0,0])
+        self.main_title=Label(text='Інфа', pos_hint={'right':0.4,'top':0.725}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'])
         self.add_widget(self.main_title)
-        self.left_page_content=Button(pos_hint={'right':0.4,'top':0.635}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/2.5, background_color=[0,0,0,0], markup=True,
+        self.left_page_content=Label(pos_hint={'right':0.4,'top':0.59}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/3, markup=True,
                                       text=f'''Глава: {username}
 Популяція: {population}
 Бюджет: {budget}$
@@ -118,11 +128,28 @@ class City(Screen):
         self.add_widget(self.left_page_content)
         ip=urllib3.request('GET', 'api.ipify.org').data.decode()
         info=urllib3.request('GET', f'https://ipapi.co/{ip}/json/').json()
-        self.right_page_content=Button(pos_hint={'x':0.5,'top':0.67}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/4.9, background_color=[0,0,0,0], markup=True)
+        self.right_page_content=Button(pos_hint={'x':0.5,'top':0.67}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/5.5, background_color=[0,0,0,0], markup=True)
         for i in info:
             self.right_page_content.text+=f'{i}: {info[i]}\n'
         self.add_widget(self.right_page_content)
+    def update_info(self):
+        self.main_title.font_size = options['text_size']
+        self.left_page_content.font_size = options['text_size']/3
+        self.right_page_content.font_size = options['text_size']/7.25
+        self.left_page_content.text=f'''Глава: {username}
+Популяція: {population}
+Бюджет: {budget}$
+
+
+
+
+
+
+
+
+'''
     def on_pre_enter(self, *args):
+        self.update_info()
         return super().on_pre_enter(*args)
 
 class Infrastructure(Screen):
@@ -301,10 +328,14 @@ class Game(Screen):
         actions_bar.add_widget(trade_button)
 
         Clock.schedule_interval(self.update,1/60)
-    
+    def on_enter(self, *args):
+        self.all_game_screen.get_screen('city').update_info()
+        return super().on_enter(*args)
     def go_menu(self,button):
         self.manager.current="menu"
     def update(self,clock):
+        options["text_size"]=Window.size[0]/13
+
         global population, budget
         if all_commands:
             _,_,command=heapq.heappop(all_commands)

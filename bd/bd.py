@@ -2,9 +2,9 @@ import mysql.connector
 # З'єднання з базою даних
 connection = mysql.connector.connect(
     host='localhost',  # або 'ip' для локального сервера
-    user='admin',
+    user='root',
     password='admin',
-    port=4539  # порт, на якому працює MySQL
+    port=9090  # порт, на якому працює MySQL
 )
 # Створення об'єкта курсора
 cursor = connection.cursor()
@@ -237,24 +237,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
 )""".format("tank_factory"))
 
 cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_poligon INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    buildings_start_time FLOAT,
-    new_buildings_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("poligon"))
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_post_office INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    buildings_start_time FLOAT,
-    new_buildings_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("post_office"))
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     id_polygon INT PRIMARY KEY AUTO_INCREMENT,
     count INT,
     buildings_start_time FLOAT,
@@ -298,10 +280,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     id_user INT,
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
 )""".format("airfield")) # аеродром
-
-
-
-
 
 army="army"
 cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
@@ -394,43 +372,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
 )""".format("plane")) # літак
 
-
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_assault_infantry INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    army_start_time FLOAT,
-    new_army_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("assault_infantry")) # лицар
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_plane INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    army_start_time FLOAT,
-    new_army_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("plane"))
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_tank INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    army_start_time FLOAT,
-    new_army_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("tank"))
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_postman INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    army_start_time FLOAT,
-    new_army_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("postman"))
 connection.commit()
 cursor.close()
 connection.close()
