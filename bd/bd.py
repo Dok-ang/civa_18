@@ -236,36 +236,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
 )""".format("tank_factory"))
 
-<<<<<<< HEAD
-=======
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_shooting_galarie INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    buildings_start_time FLOAT,
-    new_buildings_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("shooting_galarie"))
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_poligon INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    buildings_start_time FLOAT,
-    new_buildings_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("poligon"))
-
-cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
-    id_post_office INT PRIMARY KEY AUTO_INCREMENT,
-    count INT,
-    buildings_start_time FLOAT,
-    new_buildings_count INT,      
-    id_user INT,
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE ON UPDATE CASCADE         
-)""".format("post_office"))
-
->>>>>>> c218d474f34d62e3e25516e302bcd38894a06760
 cursor.execute("""CREATE TABLE IF NOT EXISTS {0} (
     id_polygon INT PRIMARY KEY AUTO_INCREMENT,
     count INT,
