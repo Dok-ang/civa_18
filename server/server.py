@@ -68,6 +68,25 @@ async def new_connect(input_message,output_message):
                 application_of_resources=build_tuple[3]
                 info_builds.setdefault(build_tuple[1],[count,buildings_start_time,new_buildings_count,mining_time,application_of_resources])
             #print(info_builds)
+            time_now=int(time.time())
+
+            # Виконання SQL-запиту для отримання вмісту таблиці
+            cursor.execute(f"SELECT * FROM buildings")
+            # Отримання результатів та виведення їх на екран
+            table_content = cursor.fetchall()
+            #print(table_content)
+
+            info_builds={}
+            for build_tuple in table_content:
+                cursor.execute(f"SELECT * FROM {build_tuple[1]} WHERE id_user=%s",(command["id"],))
+                content = cursor.fetchall()
+                count=content[0][1]
+                buildings_start_time=content[0][2]
+                new_buildings_count=content[0][3]
+                mining_time=build_tuple[2]
+                application_of_resources=build_tuple[3]
+                info_builds.setdefault(build_tuple[1],[count,buildings_start_time,new_buildings_count,mining_time,application_of_resources])
+            #print(info_builds)
             for table_name in all_resource:
                 cursor.execute(f"SELECT * FROM {table_name} WHERE id_user=%s",(command["id"],))
                 content = cursor.fetchall()
@@ -106,6 +125,11 @@ async def new_connect(input_message,output_message):
             cursor.execute("INSERT INTO iron (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["iron"],time_now))
             cursor.execute("INSERT INTO gold (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["gold"],time_now))
             cursor.execute("INSERT INTO oil (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["oil"],time_now))
+            
+            for building in all_buildings:
+                cursor.execute(f"INSERT INTO {building} (id_user, count, buildings_start_time, new_buildings_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))
+            for army in all_army:
+                cursor.execute(f"INSERT INTO {army} (id_user, count, army_start_time, new_army_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))  
             
             for building in all_buildings:
                 cursor.execute(f"INSERT INTO {building} (id_user, count, buildings_start_time, new_buildings_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))
