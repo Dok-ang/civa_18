@@ -17,7 +17,7 @@ pygame.init()
 import socket
 import threading
 import os
-import urllib3
+import urllib3 # pip install urllib3==2.2.1
 import math
 
 population=0
