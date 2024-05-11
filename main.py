@@ -1,11 +1,15 @@
 from kivy.app import App
 from kivy.uix.screenmanager import Screen, ScreenManager, WipeTransition, SlideTransition, SwapTransition
+from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy import platform
 from kivy.uix.slider import Slider
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label as KivyLabel
+from kivy.uix.widget import Widget
+from kivy.uix.image import Image
 from kivy.clock import Clock
 import pygame
 import json
@@ -13,7 +17,12 @@ pygame.init()
 import socket
 import threading
 import os
+import urllib3
+import math
 
+population=0
+budget=0
+username='user'
 priority={"init":5,
           "donate":0,
           "update_resource":8}
@@ -31,6 +40,7 @@ all_commands=[]
 resource_mining_time={} # час добування конкретного ресурсу
 resource_mining_time_control={} # час останнього збільшення
 def start_game():
+    global username
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
@@ -88,11 +98,67 @@ options["server_run"]=False
 fon_music.play(-1)
 fon_music.set_volume(options["volume"])
 
+class Label(KivyLabel):
+    def __init__(self, auto_text_size_enabled=True, **kwargs):
+        super().__init__(**kwargs)
+        self.auto_text_size_enabled=auto_text_size_enabled
+    def update(self, dt):
+        if self.auto_text_size_enabled:
+            self.text_size = [Window.size[0]*self.size_hint_x, Window.size[1]*self.size_hint_y]
+
+class ResourceIcon(Widget):
+    img=StringProperty('')
+    def __init__(self, source='', **kwargs):
+        super().__init__(**kwargs)
+        self.img=source
+
 class City(Screen):
     name="city"
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.add_widget(Button(text="Місто"))
+        self.bg=Image(source='sprites/city_bg.png', fit_mode='cover')
+        self.add_widget(self.bg)
+        self.main_title=Label(text='Інфа', pos_hint={'right':0.4,'top':0.725}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'])
+        self.add_widget(self.main_title)
+        self.left_page_content=Label(pos_hint={'right':0.4,'top':0.59}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/3, markup=True,
+                                      text=f'''Глава: {username}
+Популяція: {population}
+Бюджет: {budget}$
+
+
+
+
+
+
+
+
+''')
+        self.add_widget(self.left_page_content)
+        ip=urllib3.request('GET', 'api.ipify.org').data.decode()
+        info=urllib3.request('GET', f'https://ipapi.co/{ip}/json/').json()
+        self.right_page_content=Button(pos_hint={'x':0.5,'top':0.67}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/5.5, background_color=[0,0,0,0], markup=True)
+        for i in info:
+            self.right_page_content.text+=f'{i}: {info[i]}\n'
+        self.add_widget(self.right_page_content)
+    def update_info(self):
+        self.main_title.font_size = options['text_size']
+        self.left_page_content.font_size = options['text_size']/3
+        self.right_page_content.font_size = options['text_size']/7.25
+        self.left_page_content.text=f'''Глава: {username}
+Популяція: {population}
+Бюджет: {budget}$
+
+
+
+
+
+
+
+
+'''
+    def on_pre_enter(self, *args):
+        self.update_info()
+        return super().on_pre_enter(*args)
 
 class Infrastructure(Screen):
     name="infrastructure"
@@ -174,51 +240,51 @@ class Game(Screen):
         ###### ресурси додатково..
 
         people_box=BoxLayout(orientation="vertical")
-        people_image=Button(background_normal=path+"sprites/people.png",background_down=path+"sprites/people.png")
-        self.people_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        people_image=ResourceIcon(source=path+"sprites/people.png")
+        self.people_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         people_box.add_widget(people_image)
         people_box.add_widget(self.people_text)
         resource.add_widget(people_box)
 
         food_box=BoxLayout(orientation="vertical")
-        food_image=Button(background_normal=path+"sprites/food.png",background_down=path+"sprites/food.png")
-        self.food_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        food_image=ResourceIcon(source=path+"sprites/food.png")
+        self.food_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         food_box.add_widget(food_image)
         food_box.add_widget(self.food_text)
         resource.add_widget(food_box)
 
         tree_box=BoxLayout(orientation="vertical")
-        tree_image=Button(background_normal=path+"sprites/tree.png",background_down=path+"sprites/tree.png")
-        self.tree_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        tree_image=ResourceIcon(source=path+"sprites/tree.png")
+        self.tree_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         tree_box.add_widget(tree_image)
         tree_box.add_widget(self.tree_text)
         resource.add_widget(tree_box)
 
         stone_box=BoxLayout(orientation="vertical")
-        stone_image=Button(background_normal=path+"sprites/stone.png",background_down=path+"sprites/stone.png")
-        self.stone_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        stone_image=ResourceIcon(source=path+"sprites/stone.png")
+        self.stone_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         stone_box.add_widget(stone_image)
         stone_box.add_widget(self.stone_text)
         resource.add_widget(stone_box)
 
         iron_box=BoxLayout(orientation="vertical")
-        iron_image=Button(background_normal=path+"sprites/iron.png",background_down=path+"sprites/iron.png")
-        self.iron_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        iron_image=ResourceIcon(source=path+"sprites/iron.png")
+        self.iron_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         iron_box.add_widget(iron_image)
         iron_box.add_widget(self.iron_text)
         resource.add_widget(iron_box)
 
 
         gold_box=BoxLayout(orientation="vertical")
-        gold_image=Button(background_normal=path+"sprites/gold.png",background_down=path+"sprites/gold.png")
-        self.gold_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        gold_image=ResourceIcon(source=path+"sprites/gold.png")
+        self.gold_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         gold_box.add_widget(gold_image)
         gold_box.add_widget(self.gold_text)
         resource.add_widget(gold_box)
 
         oil_box=BoxLayout(orientation="vertical")
-        oil_image=Button(background_normal=path+"sprites/oil.png",background_down=path+"sprites/oil.png")
-        self.oil_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[1,0,1,1],text="-")
+        oil_image=ResourceIcon(source=path+"sprites/oil.png")
+        self.oil_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         oil_box.add_widget(oil_image)
         oil_box.add_widget(self.oil_text)
         resource.add_widget(oil_box)
@@ -270,10 +336,22 @@ class Game(Screen):
         actions_bar.add_widget(trade_button)
 
         Clock.schedule_interval(self.update,1/60)
-    
+    def on_enter(self, *args):
+        self.all_game_screen.get_screen('city').update_info()
+        return super().on_enter(*args)
     def go_menu(self,button):
         self.manager.current="menu"
     def update(self,clock):
+        options["text_size"]=Window.size[0]/13
+        self.people_text.font_size=options["text_size"]*0.3
+        self.food_text.font_size=options["text_size"]*0.3
+        self.tree_text.font_size=options["text_size"]*0.3
+        self.stone_text.font_size=options["text_size"]*0.3
+        self.iron_text.font_size=options["text_size"]*0.3
+        self.gold_text.font_size=options["text_size"]*0.3
+        self.oil_text.font_size=options["text_size"]*0.3
+
+        global population, budget
         if all_commands:
             _,_,command=heapq.heappop(all_commands)
             if command["action"]=="init" or command["action"]=="update_resource":
@@ -286,12 +364,14 @@ class Game(Screen):
                     self.all_resource[res]+=1
                     resource_mining_time_control[res]=time_now+(time_now-resource_mining_time_control[res]-resource_mining_time[res])
             self.people_text.text=str(self.all_resource["people"])
+            population=int(self.people_text.text)
             self.food_text.text=str(self.all_resource["food"])
             self.tree_text.text=str(self.all_resource["tree"])
             self.iron_text.text=str(self.all_resource["iron"])
             self.gold_text.text=str(self.all_resource["gold"])
             self.stone_text.text=str(self.all_resource["stone"])
             self.oil_text.text=str(self.all_resource["oil"])
+            budget=self.all_resource["gold"]+self.all_resource["oil"]*10
             
 
         
