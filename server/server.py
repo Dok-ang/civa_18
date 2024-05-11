@@ -37,13 +37,16 @@ async def new_connect(input_message,output_message):
     print(command)
     #command, param=date.split(" ")
     if command["action"]=="autorization":
-        with open("file/token.txt","r") as f:
-            all_token=f.readlines()
+        cursor.execute("SELECT * FROM users")
+        content = cursor.fetchall()
+        all_token=[]
+        for i in content:
+            all_token.append(i[1])
         #print(all_token[14],command["token"])
         #for i in range(1000):
         #    print(i)
         #    await asyncio.sleep(0.1)
-        if command["token"]+"\n" in all_token:
+        if command["token"] in all_token:
             print("Ok")
             info={"action":"update_resource"}
             time_now=int(time.time())
@@ -88,8 +91,7 @@ async def new_connect(input_message,output_message):
             # Вставка даних в таблицю
             print("new user0")
             command = "INSERT INTO {0} (token, name, email) VALUES (%s, %s, %s)".format("users")
-            with open("file/user_number.txt","r") as f:
-                user_number=f.read()
+            user_number=str(len(all_token)+1)
             token=user_number
             for i in range(16-len(user_number)):
                 token=token+chr(int(str(time.time())[-1::])+random.randint(97,113))
@@ -110,10 +112,6 @@ async def new_connect(input_message,output_message):
             for army in all_army:
                 cursor.execute(f"INSERT INTO {army} (id_user, count, army_start_time, new_army_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))  
             connection.commit()
-            with open("file/user_number.txt","w") as f:
-                f.write(str(int(user_number)+1))
-            with open("file/token.txt","a") as f:
-                f.write(token+"\n")
             info={"token":token,"id":int(user_number)}
             info.update(start_resource)
             info["action"]="init"
