@@ -17,7 +17,7 @@ pygame.init()
 import socket
 import threading
 import os
-import urllib3
+import urllib3 # pip install urllib3==2.2.1
 import math
 
 population=0
@@ -32,10 +32,10 @@ if platform=="android":
     local_path=path
 if platform=="win":
     w,h=pygame.display.Info().current_w,pygame.display.Info().current_h
-    Window.size=[w/2.3,h/5*4]
+    Window.size=[w//1.5,w//3]
     Window.left=w//2-Window.size[0]//2
     Window.top=h//2-Window.size[1]//2
-    local_path=os.path.join(os.environ['LOCALAPPDATA'], 'civa')
+    local_path=os.path.join(os.environ['LOCALAPPDATA'],'civa')
 import heapq
 import time
 all_commands=[]
@@ -46,7 +46,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("192.168.0.120",8080))
+            obj.connect(("80.77.36.110",2023))
             break
         except:
             pass
@@ -73,7 +73,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("192.168.0.120",8080))
+            obj.connect(("80.77.36.110",2023))
             break
         except:
             pass
@@ -94,10 +94,12 @@ server_thread=threading.Thread(target=start_game)
 fon_music=pygame.mixer.Sound(path+"music/something_lost-185380.mp3")
 if not os.path.exists(local_path):
     os.makedirs(local_path)
-if not os.path.exists(os.path.join(local_path, "options.json")):
-    options={"volume": 0.5, "font": os.path.join(path, "font/7fonts_Knight2.ttf"), "text_size":Window.size[0]/13, "server_run": False}
-    open(os.path.join(local_path, "options.json"), "w").write(json.dumps(options))
-file=open(os.path.join(local_path, "options.json"), "r")
+if not os.path.exists(os.path.join(local_path,"options.json")):
+    options={"volume": 0.5, "font": os.path.join(path,"font/7fonts_Knight2.ttf"), "text_size": Window.size[0]/13, "server_run": False}
+    open(os.path.join(local_path,"options.json"),"w").write(json.dumps(options))
+
+file=open(os.path.join(local_path,"options.json"),"r")
+
 options=json.loads(file.read())
 file.close()
 options["text_size"]=Window.size[0]/13
@@ -122,7 +124,7 @@ class City(Screen):
     name="city"
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.bg=Image(source='sprites/city_bg.png', fit_mode='cover')
+        self.bg=Image(source=path+'sprites/city_bg.png', fit_mode='cover')
         self.add_widget(self.bg)
         self.main_title=Label(text='Інфа', pos_hint={'right':0.4,'top':0.725}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'])
         self.add_widget(self.main_title)
@@ -167,10 +169,10 @@ class City(Screen):
         return super().on_pre_enter(*args)
 
 class Infrastructure(Screen):
+    background_pic=StringProperty(path+'sprites/city_bg.png')
     name="infrastructure"
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.add_widget(Button(text="Інфраструктура"))
         
 class Army(Screen):
     name="army"
