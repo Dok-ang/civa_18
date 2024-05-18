@@ -32,9 +32,9 @@ if platform=="android":
     local_path=path
 if platform=="win":
     w,h=pygame.display.Info().current_w,pygame.display.Info().current_h
-    Window.size=[w/2.3,h/5*4]
-    Window.left=w//2-Window.size[0]//2
-    Window.top=h//2-Window.size[1]//2
+    Window.size=[w/2,w/4]
+    Window.left=w//2-w//4
+    Window.top=h//2-w//8
     local_path=os.environ['LOCALAPPDATA']+'/'
 import heapq
 import time
@@ -169,9 +169,10 @@ class City(Screen):
 
 class Infrastructure(Screen):
     name="infrastructure"
+    background_pic=os.path.join(path,"sprites/city_bg.png")
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.add_widget(Button(text="Інфраструктура"))
+        #self.add_widget(Button(text="Інфраструктура"))
         
 class Army(Screen):
     name="army"
