@@ -1,0 +1,5 @@
+#comment
+__pycache__
+test/*
+*test*
+!super_test*

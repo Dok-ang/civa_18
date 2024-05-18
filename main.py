@@ -102,7 +102,6 @@ file=open(os.path.join(local_path,"options.json"),"r")
 
 options=json.loads(file.read())
 file.close()
-options["text_size"]=Window.size[0]/13
 fon_music.play(-1)
 fon_music.set_volume(options["volume"])
 
