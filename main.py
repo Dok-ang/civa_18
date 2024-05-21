@@ -31,8 +31,9 @@ if platform=="android":
     path=os.path.abspath('')+'\\'
     local_path=path
 if platform=="win":
-    w,h=pygame.display.Info().current_w,pygame.display.Info().current_h
-    Window.size=[w//1.5,w//3]
+    dw,dh=pygame.display.Info().current_w,pygame.display.Info().current_h
+    w,h=dw//1.5,dw//3
+    Window.size=[w,h]
     Window.left=w//2-Window.size[0]//2
     Window.top=h//2-Window.size[1]//2
     local_path=os.path.join(os.environ['LOCALAPPDATA'],'civa')
@@ -46,11 +47,14 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("80.77.36.110",2023))
+            obj.connect(("134.249.176.116",8080))
             break
         except:
             pass
-    with open(path+"file/userdata.json","r") as f:
+    if not os.path.exists(os.path.join(local_path, "userdata.json")):
+        with open(os.path.join(local_path, "userdata.json"), "w") as f:
+            f.write(json.dumps({"action": "autorization", "token": "", "id": -1, "name": "user", "email": ""}))
+    with open(os.path.join(local_path, "userdata.json"),"r") as f:
         text=f.read()
     #text="token ({0})".format(text)
     obj.sendall(text.encode("utf-8"))
@@ -65,7 +69,7 @@ def start_game():
     elif command["action"]=="update_resource":
         heapq.heappush(all_commands,(priority["update_resource"],time.time(),command))
     #all_commands.update(command)
-    with open(path+"file/userdata.json", "w") as g:
+    with open(os.path.join(local_path, "userdata.json"), "w") as g:
         g.write(json.dumps(text))
     #print(date.decode("utf-8"))
     obj.close()
@@ -73,7 +77,7 @@ def start_game():
     obj=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     while True:
         try:
-            obj.connect(("80.77.36.110",2023))
+            obj.connect(("134.249.176.116",8080))
             break
         except:
             pass
@@ -126,9 +130,9 @@ class City(Screen):
         super().__init__(**kw)
         self.bg=Image(source=path+'sprites/city_bg.png', fit_mode='cover')
         self.add_widget(self.bg)
-        self.main_title=Label(text='Інфа', pos_hint={'right':0.4,'top':0.725}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'])
+        self.main_title=Label(text='Інфа', pos_hint={'right':0.4,'top':0.9}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'])
         self.add_widget(self.main_title)
-        self.left_page_content=Label(pos_hint={'right':0.4,'top':0.59}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/3, markup=True,
+        self.left_page_content=Label(pos_hint={'right':0.41,'top':0.48}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/3, markup=True,
                                       text=f'''Глава: {username}
 Популяція: {population}
 Бюджет: {budget}$
@@ -227,6 +231,7 @@ class Menu(Screen):
         self.manager.current="settings"
     def go_records(self,button):
         self.manager.current="records"
+
 class Game(Screen):
     name="game"
     def __init__(self, **kw):
@@ -249,35 +254,35 @@ class Game(Screen):
 
         people_box=BoxLayout(orientation="vertical")
         people_image=ResourceIcon(source=path+"sprites/people.png")
-        self.people_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.people_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         people_box.add_widget(people_image)
         people_box.add_widget(self.people_text)
         resource.add_widget(people_box)
 
         food_box=BoxLayout(orientation="vertical")
         food_image=ResourceIcon(source=path+"sprites/food.png")
-        self.food_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.food_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         food_box.add_widget(food_image)
         food_box.add_widget(self.food_text)
         resource.add_widget(food_box)
 
         tree_box=BoxLayout(orientation="vertical")
         tree_image=ResourceIcon(source=path+"sprites/tree.png")
-        self.tree_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.tree_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         tree_box.add_widget(tree_image)
         tree_box.add_widget(self.tree_text)
         resource.add_widget(tree_box)
 
         stone_box=BoxLayout(orientation="vertical")
         stone_image=ResourceIcon(source=path+"sprites/stone.png")
-        self.stone_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.stone_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         stone_box.add_widget(stone_image)
         stone_box.add_widget(self.stone_text)
         resource.add_widget(stone_box)
 
         iron_box=BoxLayout(orientation="vertical")
         iron_image=ResourceIcon(source=path+"sprites/iron.png")
-        self.iron_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.iron_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         iron_box.add_widget(iron_image)
         iron_box.add_widget(self.iron_text)
         resource.add_widget(iron_box)
@@ -285,14 +290,14 @@ class Game(Screen):
 
         gold_box=BoxLayout(orientation="vertical")
         gold_image=ResourceIcon(source=path+"sprites/gold.png")
-        self.gold_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.gold_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         gold_box.add_widget(gold_image)
         gold_box.add_widget(self.gold_text)
         resource.add_widget(gold_box)
 
         oil_box=BoxLayout(orientation="vertical")
         oil_image=ResourceIcon(source=path+"sprites/oil.png")
-        self.oil_text=Button(size_hint=[1,0.15],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
+        self.oil_text=Button(size_hint=[1,0.3],background_normal=path+"",background_down=path+"",color=[0,0,0,1],text="-",bold=True,font_size=options['text_size']*0.4)
         oil_box.add_widget(oil_image)
         oil_box.add_widget(self.oil_text)
         resource.add_widget(oil_box)
