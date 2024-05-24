@@ -31,11 +31,10 @@ if platform=="android":
     path=os.path.abspath('')+'\\'
     local_path=path
 if platform=="win":
-    dw,dh=pygame.display.Info().current_w,pygame.display.Info().current_h
-    w,h=dw//1.5,dw//3
-    Window.size=[w,h]
-    Window.left=w//2-Window.size[0]//2
-    Window.top=h//2-Window.size[1]//2
+    w,h=pygame.display.Info().current_w,pygame.display.Info().current_h
+    Window.size=[w//2,w//4]
+    Window.left=w//2-w//4
+    Window.top=h//2-w//8
     local_path=os.path.join(os.environ['LOCALAPPDATA'],'civa')
 import heapq
 import time
@@ -132,7 +131,7 @@ class City(Screen):
         self.add_widget(self.bg)
         self.main_title=Label(text='Інфа', pos_hint={'right':0.4,'top':0.9}, size_hint=[0.2,0.1], bold=True, color=[0,0,0,1], font_size=options['text_size'])
         self.add_widget(self.main_title)
-        self.left_page_content=Label(pos_hint={'right':0.41,'top':0.48}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/3, markup=True,
+        self.left_page_content=Label(pos_hint={'right':0.4,'top':0.48}, size_hint=[0.3,0.35], italic=True, color=[0,0,0,1], font_size=options['text_size']/3, markup=True,
                                       text=f'''Глава: {username}
 Популяція: {population}
 Бюджет: {budget}$
@@ -173,10 +172,11 @@ class City(Screen):
         return super().on_pre_enter(*args)
 
 class Infrastructure(Screen):
-    background_pic=StringProperty(path+'sprites/city_bg.png')
     name="infrastructure"
+    background_pic=os.path.join(path,"sprites/city_bg.png")
     def __init__(self, **kw):
         super().__init__(**kw)
+        #self.add_widget(Button(text="Інфраструктура"))
         
 class Army(Screen):
     name="army"
@@ -231,7 +231,7 @@ class Menu(Screen):
         self.manager.current="settings"
     def go_records(self,button):
         self.manager.current="records"
-
+        
 class Game(Screen):
     name="game"
     def __init__(self, **kw):

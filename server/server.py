@@ -58,33 +58,57 @@ async def new_connect(input_message,output_message):
             #print(table_content)
 
             info_builds={}
-            for build_tuple in table_content:
-                cursor.execute(f"SELECT * FROM {build_tuple[1]} WHERE id_user=%s",(command["id"],))
+            for index in range(len(table_content)):
+                cursor.execute(f"SELECT * FROM {table_content[index][1]} WHERE id_user=%s",(command["id"],))
                 content = cursor.fetchall()
-                count=content[0][1]
-                buildings_start_time=content[0][2]
-                new_buildings_count=content[0][3]
-                mining_time=build_tuple[2]
-                application_of_resources=build_tuple[3]
-                info_builds.setdefault(build_tuple[1],[count,buildings_start_time,new_buildings_count,mining_time,application_of_resources])
+                count=content[0][1] # кількість
+                buildings_start_time=content[0][2] # час початку побудови
+                new_buildings_count=content[0][3] # кількість будується
+                mining_time=table_content[index][2] # час побудови 
+                application_of_resources=table_content[index][3] # на скільки збільшуємо
+                info_builds.setdefault(table_content[index][1],[count,buildings_start_time,new_buildings_count,mining_time,application_of_resources])
             #print(info_builds)
-            for table_name in all_resource:
-                cursor.execute(f"SELECT * FROM {table_name} WHERE id_user=%s",(command["id"],))
+            time_now=int(time.time())
+
+
+
+
+            for index in range(1,len(all_resource)):
+                cursor.execute(f"SELECT * FROM {all_resource[index]} WHERE id_user=%s",(command["id"],))
                 content = cursor.fetchall()
+
+                
                 #time_now=int(time.time())
                 last_update=content[0][2]
-                count=content[0][1]
-                #print(content)
-                time_pas=time_now-last_update
+                count_res=content[0][1]
 
+                #print(content)
+                time_pas=time_now-last_update # минуло часу для з моменту оновлення ресурсів
+                time_pass_buildings=time_now-info_builds[all_buildings[index]][1]  # минуло часу для з моменту оновлення будівель
+                possible_build=time_pass_buildings//info_builds[all_buildings[index]][4] # скільки могли збудувати
+                new_buildings_count=info_builds[all_buildings[index]][3] # скільки мали збудувати
+                count_build=info_builds[all_buildings[index]][0] # кількість
+                count_add_res=time_pas//resource_mining_time[all_resource[index]] # скільки разів додаємо ресурси
+                min_buld_res=count_add_res*count_build # за арифметичною прогресією мінімально побудовано
                 # час побудови останньої будівлі
                 
-
-                count+=time_pas//resource_mining_time[table_name] # new res
-                info.setdefault(table_name,count)
-                last_update=time_now-time_pas%resource_mining_time[table_name]
-                cursor.execute(f"UPDATE {table_name} SET count=%s WHERE id_user=%s",(count,command["id"]))
-                cursor.execute(f"UPDATE {table_name} SET last_update=%s WHERE id_user=%s",(last_update,command["id"]))
+                if new_buildings_count==0:
+                    new_count=count_res+min_buld_res
+                    info_builds[all_buildings[index]][1]=time_now
+                elif new_buildings_count<=possible_build:
+                    count_build+=new_buildings_count
+                    max_buld_res=count_add_res*count_build # максимум добування ресурсів
+                    average_buld_res=(min_buld_res+max_buld_res)//2*count_add_res # скільки добули ресурсів за проміжок часу побудови будинків
+                    time_pas=time_now-(last_update+info_builds[all_buildings[index]][4]*new_buildings_count) # минуло часу для з моменту оновлення ресурсів
+                    new_count=count_res+average_buld_res+time_pas//resource_mining_time[all_resource[index]]
+                    info_builds[all_buildings[index]][3]=0
+                    info_builds[all_buildings[index]][1]=time_now
+                else:
+                    new_count=0
+                info.setdefault(all_resource[index],new_count)
+                last_update=time_now-time_pas%resource_mining_time[all_resource[index]]
+                cursor.execute(f"UPDATE {all_resource[index]} SET count=%s WHERE id_user=%s",(count,command["id"]))
+                cursor.execute(f"UPDATE {all_resource[index]} SET last_update=%s WHERE id_user=%s",(last_update,command["id"]))
             print(json.dumps(info))
             output_message.write(json.dumps(info).encode("utf-8"))
         else:
@@ -106,6 +130,11 @@ async def new_connect(input_message,output_message):
             cursor.execute("INSERT INTO iron (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["iron"],time_now))
             cursor.execute("INSERT INTO gold (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["gold"],time_now))
             cursor.execute("INSERT INTO oil (id_user, count, last_update) VALUES (%s, %s, %s)", (user_id,start_resource["oil"],time_now))
+            
+            for building in all_buildings:
+                cursor.execute(f"INSERT INTO {building} (id_user, count, buildings_start_time, new_buildings_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))
+            for army in all_army:
+                cursor.execute(f"INSERT INTO {army} (id_user, count, army_start_time, new_army_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))  
             
             for building in all_buildings:
                 cursor.execute(f"INSERT INTO {building} (id_user, count, buildings_start_time, new_buildings_count) VALUES (%s, %s, %s, %s)", (user_id,0,time_now,0))
